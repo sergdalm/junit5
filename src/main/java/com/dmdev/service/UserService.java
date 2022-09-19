@@ -7,25 +7,27 @@ import com.dmdev.exception.ValidationException;
 import com.dmdev.mapper.CreateUserMapper;
 import com.dmdev.mapper.UserMapper;
 import com.dmdev.validator.CreateUserValidator;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.util.Optional;
 
-import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 public class UserService {
 
-    private static final UserService INSTANCE = new UserService();
+    private final CreateUserValidator createUserValidator;
+    private final UserDao userDao;
+    private final CreateUserMapper createUserMapper;
+    private final UserMapper userMapper;
 
-    private final CreateUserValidator createUserValidator = CreateUserValidator.getInstance();
-    private final UserDao userDao = UserDao.getInstance();
-    private final CreateUserMapper createUserMapper = CreateUserMapper.getInstance();
-    private final UserMapper userMapper = UserMapper.getInstance();
+    public UserService() {
+        this(UserDao.getInstance(), CreateUserMapper.getInstance(), UserMapper.getInstance(), CreateUserValidator.getInstance());
+    }
 
-    public static UserService getInstance() {
-        return INSTANCE;
+    private UserService(UserDao userDao, CreateUserMapper createUserMapper, UserMapper userMapper, CreateUserValidator createUserValidator) {
+        this.userDao = userDao;
+        this.createUserMapper = createUserMapper;
+        this.userMapper = userMapper;
+        this.createUserValidator = createUserValidator;
     }
 
     public Optional<UserDto> login(String email, String password) {
